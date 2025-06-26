@@ -172,13 +172,13 @@ jobs:
     steps:
       - name: Checkout
         uses: cloudbees-io/checkout@v1
-      - uses: cashokannamalai/kubeconfig@v1
-        name: Set kubeconfig
+      - name: Set kubeconfig
+        uses: cashokannamalai/kubeconfig@v1
         with:
           secname: ${{ secrets.kubeconfig }}
-      - uses: cloudbees-io/kustomize-deploy@v1
-        name: Deploy to cluster
+      - name: Deploy to cluster
         kind: deploy
+        uses: cloudbees-io/kustomize-deploy@v1
         with:
           kustomization-base-dir: ${{ cloudbees.workspace }}/k8s/base
           kustomization-overlays-dir: ${{ cloudbees.workspace }}/k8s/overlays/prod
@@ -192,6 +192,13 @@ jobs:
 
             Running hackers-organized:${{ cloudbees.scm.sha }}
           format: MARKDOWN
+      - name: Register Artifact Deployment
+        with:
+          version: latest
+          url: ldonleycb/hackers-organized:4b26d4f2979b0c7c77bd5892c3249f2287c82768
+          target-environment: DOW Production
+          name: ldonleycb/hackers-organized
+        uses: cloudbees-io/register-deployed-artifact@v1
     needs:
       - build-container-image
       - scan
